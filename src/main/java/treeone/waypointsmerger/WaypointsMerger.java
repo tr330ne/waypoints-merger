@@ -1,5 +1,6 @@
 package treeone.waypointsmerger;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
@@ -15,7 +16,6 @@ import org.rusherhack.core.setting.BooleanSetting;
 import org.rusherhack.core.setting.EnumSetting;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -65,7 +65,7 @@ public class WaypointsMerger extends ToggleableModule {
             Minecraft mc = Minecraft.getInstance();
 
             if (mc.level == null) {
-                sendMessage("§cNot in a world");
+                sendMessage(Component.literal("Not in a world").withStyle(ChatFormatting.RED));
                 return;
             }
 
@@ -74,21 +74,21 @@ public class WaypointsMerger extends ToggleableModule {
             List<WaypointData> waypoints = readWaypointsFromFile();
 
             if (waypoints.isEmpty()) {
-                sendMessage("§eNo waypoints found in Xaero's");
+                sendMessage(Component.literal("No waypoints found in Xaero's").withStyle(ChatFormatting.YELLOW));
                 return;
             }
 
             String serverIP = getServerIP();
 
             if (serverIP == null) {
-                sendMessage("§cCannot determine server/world");
+                sendMessage(Component.literal("Cannot determine server/world").withStyle(ChatFormatting.RED));
                 return;
             }
 
-            IWaypointManager waypointManager = getWaypointManagerReflection();
+            IWaypointManager waypointManager = RusherHackAPI.getWaypointManager();
 
             if (waypointManager == null) {
-                sendMessage("§cCannot access waypoint manager");
+                sendMessage(Component.literal("Cannot access waypoint manager").withStyle(ChatFormatting.RED));
                 return;
             }
 
@@ -126,45 +126,19 @@ public class WaypointsMerger extends ToggleableModule {
             }
 
             if (showInfo.getValue() || showDebug.getValue()) {
-                String message = String.format("§7Synchronized %d waypoints", added);
+                Component message = Component.literal("Synchronized " + added + " waypoints")
+                        .withStyle(ChatFormatting.GRAY);
                 if (skipped > 0 && showDebug.getValue()) {
-                    message += String.format(" (skipped: %d)", skipped);
+                    message = Component.literal("Synchronized " + added + " waypoints (skipped: " + skipped + ")")
+                            .withStyle(ChatFormatting.GRAY);
                 }
                 sendMessage(message);
             }
 
         } catch (Exception e) {
-            sendMessage("§cExport error: " + e.getMessage());
+            sendMessage(Component.literal("Export error: " + e.getMessage()).withStyle(ChatFormatting.RED));
             e.printStackTrace();
         }
-    }
-
-    private IWaypointManager getWaypointManagerReflection() {
-        try {
-            java.lang.reflect.Field[] fields = RusherHackAPI.class.getDeclaredFields();
-
-            for (java.lang.reflect.Field field : fields) {
-                field.setAccessible(true);
-                Object value = field.get(null);
-
-                if (value != null) {
-                    try {
-                        Method method = value.getClass().getMethod("getWaypointManager");
-                        IWaypointManager manager = (IWaypointManager) method.invoke(value);
-                        return manager;
-                    } catch (NoSuchMethodException ignored) {
-                    }
-                }
-            }
-
-            sendMessage("§cCould not find WaypointManager");
-            return null;
-
-        } catch (Exception e) {
-            sendMessage("§cError accessing waypoint manager: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private boolean shouldSyncDimension(String dimension) {
@@ -210,7 +184,7 @@ public class WaypointsMerger extends ToggleableModule {
             File xaeroDir = new File(minecraftDir, "xaero/minimap");
 
             if (!xaeroDir.exists()) {
-                sendMessage("§cXaero folder not found");
+                sendMessage(Component.literal("Xaero folder not found").withStyle(ChatFormatting.RED));
                 return waypoints;
             }
 
@@ -231,15 +205,16 @@ public class WaypointsMerger extends ToggleableModule {
                 if (currentWorldDir.exists()) {
                     waypointFiles = findWaypointFilesWithDimension(currentWorldDir);
                     if (showDebug.getValue()) {
-                        sendMessage("§7World: " + currentWorldName);
+                        sendMessage(Component.literal("World: " + currentWorldName).withStyle(ChatFormatting.GRAY));
                     }
                 } else {
-                    sendMessage("§cWorld folder not found: " + currentWorldName);
+                    sendMessage(Component.literal("World folder not found: " + currentWorldName)
+                            .withStyle(ChatFormatting.RED));
                 }
             }
 
             if (waypointFiles.isEmpty()) {
-                sendMessage("§cWaypoint files not found");
+                sendMessage(Component.literal("Waypoint files not found").withStyle(ChatFormatting.RED));
                 return waypoints;
             }
 
@@ -257,14 +232,14 @@ public class WaypointsMerger extends ToggleableModule {
                     if (wp != null) {
                         if (!wp.disabled && !wp.isDeathpoint) {
                             if (showDebug.getValue()) {
-                                sendMessage(String.format("§aFound: %s (%d, %d, %d) [%s]",
-                                        wp.name, wp.x, wp.y, wp.z, wp.dimension));
+                                sendMessage(Component.literal(String.format("Found: %s (%d, %d, %d) [%s]",
+                                        wp.name, wp.x, wp.y, wp.z, wp.dimension)).withStyle(ChatFormatting.GREEN));
                             }
                             waypoints.add(wp);
                         } else if (!wp.disabled && wp.isDeathpoint && includeDeathpoints.getValue()) {
                             if (showDebug.getValue()) {
-                                sendMessage(String.format("§aFound deathpoint: %s (%d, %d, %d) [%s]",
-                                        wp.name, wp.x, wp.y, wp.z, wp.dimension));
+                                sendMessage(Component.literal(String.format("Found deathpoint: %s (%d, %d, %d) [%s]",
+                                        wp.name, wp.x, wp.y, wp.z, wp.dimension)).withStyle(ChatFormatting.GREEN));
                             }
                             waypoints.add(wp);
                         }
@@ -273,7 +248,7 @@ public class WaypointsMerger extends ToggleableModule {
             }
 
         } catch (Exception e) {
-            sendMessage("§cError reading files: " + e.getMessage());
+            sendMessage(Component.literal("Error reading files: " + e.getMessage()).withStyle(ChatFormatting.RED));
             e.printStackTrace();
         }
 
@@ -370,10 +345,10 @@ public class WaypointsMerger extends ToggleableModule {
         return null;
     }
 
-    private void sendMessage(String message) {
+    private void sendMessage(Component message) {
         var player = Minecraft.getInstance().player;
         if (player != null) {
-            player.displayClientMessage(Component.literal(message), false);
+            player.displayClientMessage(message, false);
         }
     }
 
