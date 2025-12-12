@@ -38,7 +38,7 @@ public class WaypointsMerger extends ToggleableModule {
 
         dimensionFilter.setDescription("Which dimensions to sync");
         includeDeathpoints.setDescription("Include deathpoints in sync");
-        showInfo.setDescription("Show sync result message");
+        showInfo.setDescription("Show result message");
         showDebug.setDescription("Show debug messages");
 
         this.registerSettings(dimensionFilter, includeDeathpoints, showInfo, showDebug);
@@ -364,7 +364,7 @@ public class WaypointsMerger extends ToggleableModule {
         if (mc.getCurrentServer() != null) {
             return mc.getCurrentServer().ip;
         } else if (mc.getSingleplayerServer() != null) {
-            return "singleplayer_" + mc.getSingleplayerServer().getWorldData().getLevelName();
+            return "localhost";
         }
 
         return null;
