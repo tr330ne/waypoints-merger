@@ -1,5 +1,5 @@
 # WaypointSync [1.21.1-1.21.4]
-Automatically synchronizes waypoints from Xaero to Rusher.
+Automatically synchronizes waypoints from Xaero to Rusher. Requires XaeroPlus to be installed: https://modrinth.com/mod/xaeroplus
 
 ## For any information about the plugin, contact:
 - **Discord – ```treeone```**
