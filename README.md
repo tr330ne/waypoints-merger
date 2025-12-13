@@ -5,4 +5,4 @@ Synchronizes waypoints from Xaero's to Rusher.
 - **Discord – ```treeone```**
 - **Telegram – ```tr330ne```**
 
-<img width="221" height="220" alt="Screenshot_1" src="https://github.com/user-attachments/assets/6ec08d2b-7d1b-413b-adb9-d63ecfaba3cf" />
+- <img width="248" height="200" alt="Screenshot_1" src="https://github.com/user-attachments/assets/2baaaecc-9a0d-4cce-af3e-7106009ee55b" />
