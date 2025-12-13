@@ -1,0 +1,14 @@
+{
+  "Plugin-Class": "treeone.waypointsync.WaypointSyncPlugin",
+  "Name": "WaypointSync",
+  "Version": "0.1",
+  "Description": "Automatically synchronizes waypoints from Xaero to Rusher",
+  "Authors": [
+    "TreeOne"
+  ],
+  "Minecraft-Versions": [
+    "1.21.1",
+    "1.21.3",
+    "1.21.4"
+  ]
+}
